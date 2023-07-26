@@ -2,7 +2,7 @@
 
 PSQL="psql --username=freecodecamp --dbname=number_guess --tuples-only -c"
 
-RANDOM_NUMBER = $(( $RANDOM % 1000 + 1 ))
+RANDOM_NUMBER=$(( 1 + $RANDOM % 1000 ))
 COUNT_GUESSES=0
 GUESS_NUMBER=-1
 
@@ -11,10 +11,12 @@ read USERNAME
 
 # check if the name is in users table
 USER_ID=$($PSQL "select user_id from users where username='$USERNAME'")
+echo $USER_ID;
+
 
 if [[ -z $USER_ID ]]
 then
-  echo "Welcome, '$USERNAME'! It looks like this is your first time here."
+  echo "Welcome, $USERNAME! It looks like this is your first time here."
   # the user is NOT in db, so insert username
   INSERT_USER=$($PSQL "insert into users (username) values ('$USERNAME')")
   
@@ -22,7 +24,7 @@ else
   # the user is already in db
   GAMES_PLAYED=$($PSQL "select count(*) from games where user_id='$USER_ID'")
   BEST_GAME=$($PSQL "select min(guesses) from games where user_id='$USER_ID'")
-  echo "Welcome back, '$USERNAME'! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
+  echo "Welcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 fi
 
 echo "Guess the secret number between 1 and 1000:"
@@ -48,6 +50,8 @@ done
 USER_ID=$($PSQL "select user_id from users where username='$USERNAME'")
 RESULT=$($PSQL "insert into games (user_id, guesses) values ($USER_ID, $COUNT_GUESSES)")
 echo "You guessed it in $COUNT_GUESSES tries. The secret number was $RANDOM_NUMBER. Nice job!"
+
+
 
 
 
